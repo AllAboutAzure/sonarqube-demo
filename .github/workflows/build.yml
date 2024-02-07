@@ -48,7 +48,7 @@ jobs:
           dotnet tool install --global dotnet-sonarscanner
           dotnet add package coverlet.msbuild
           dotnet add package coverlet.collector
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"AllAboutAzure_CI-Build-Checks-DotNet" /o:"allaboutazure" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"AllAboutAzure_sonarqube-demo" /o:"allaboutazure" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build "ShoppingCartWebApi"
           # dotnet test "ShoppingTest/ShoppingEndControllerTest.cs" `
           # --collect:"XPlat Code Coverage" `
