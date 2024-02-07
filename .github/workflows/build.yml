@@ -48,7 +48,7 @@ jobs:
           dotnet tool install --global dotnet-sonarscanner
           dotnet add package coverlet.msbuild
           dotnet add package coverlet.collector
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"AllAboutAzure_sonarqube-demo" /o:"allaboutazure" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"AllAboutAzure_sonarqube-demo" /o:"allaboutazure" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.host.url="https://sonarcloud.io"
           dotnet build "ShoppingCartWebApi"
           dotnet test "ShoppingTest/ShoppingEndControllerTest.cs" `
           --collect:"XPlat Code Coverage" `
@@ -56,4 +56,6 @@ jobs:
           --logger "trx;LogFileName=unittests.trx" `
           --configuration release `
           -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
