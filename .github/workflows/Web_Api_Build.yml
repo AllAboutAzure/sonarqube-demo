@@ -30,7 +30,7 @@ jobs:
   # SonarQube scanner job here
   sonarqube:
     name: SonarQube Scanner
-    runs-on: [self-hosted, Windows]
+    runs-on: windows-latest
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout code
