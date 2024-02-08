@@ -64,3 +64,9 @@ jobs:
 
       - name: Dotnet Build
         run: dotnet build --configuration Release --output ./output
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: webapi-app
+          path: ./output
