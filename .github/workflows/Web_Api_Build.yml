@@ -43,7 +43,6 @@ jobs:
           project_unittest_path: ${{ env.UNIT_TEST_PATH }}
           sonarqube_project_id: ${{ env.SONARQUBE_PROJECT_ID }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
-          github_token: ${{secrets.GITHUB_TOKEN}}
           sonarqube_org_id : ${{env.SONARQUBE_ORG_ID}}
 
   webapi-build:
