@@ -20,7 +20,8 @@ Targeted : Large Projects with multiple dependencies._
 
 **Pipeline References**:
 1. During PR -> https://github.com/AllAboutAzure/sonarqube-demo/actions/runs/7830543627
-   ![image](https://github.com/AllAboutAzure/sonarqube-demo/assets/156210181/f0c197d5-f0fc-472f-adf3-af829427bf57)
+   ![image](https://github.com/AllAboutAzure/sonarqube-demo/assets/156210181/b0cbd605-6f72-447c-91d6-4bb4953f5868)
+
    
 2. After merging with Main -> https://github.com/AllAboutAzure/sonarqube-demo/actions/runs/7830543627
    ![image](https://github.com/AllAboutAzure/sonarqube-demo/assets/156210181/1d69368e-c2ff-4124-abaa-d5bf82ebc9b1)
