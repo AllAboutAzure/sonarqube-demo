@@ -49,8 +49,8 @@ jobs:
        #needs: [sonarqube]
        runs-on: windows-latest
        env:
-       BUILD_CONFIG: 'Release'
-       SOLUTION: 'SonarWebApi.sln'
+         BUILD_CONFIG: 'Release'
+         SOLUTION: 'SonarWebApi.sln'
        steps:
        - uses: actions/checkout@v2
 
