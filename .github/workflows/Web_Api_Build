@@ -1,0 +1,45 @@
+name: Web_Api_Build
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+    paths:
+      - 'ShoppingCartWebApi/**'
+      -  'ShoppingTest/**'
+  push:
+    branches:
+      - master
+    paths:
+      - 'ShoppingCartWebApi/**'
+      - 'ShoppingTest/**'
+  workflow_dispatch:
+  workflow_call:
+env:  
+  CODE_PATH: 'ShoppingCartWebApi'
+  UNIT_TEST_PATH: 'ShoppingTest/ShoppingEndControllerTest.cs'
+  DOTNET_VERSION: '6.0.x'
+  SONARQUBE_PROJECT_ID: 'AllAboutAzure_sonarqube-demo'
+  SONARQUBE_ORG_ID: 'allaboutazure'
+
+jobs:
+  # SonarQube scanner job here
+  sonarqube:
+    name: SonarQube Scanner
+    runs-on: [self-hosted, Windows]
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: SonarQube scanner
+        id: sonarqube_scanner
+        uses: ./github/workflows/sonar-build-template.yml
+        with:
+          project_solution_path: ${{ env.CODE_PATH }}
+          project_unittest_path: ${{ env.UNIT_TEST_PATH }}
+          sonarqube_project_id: ${{ env.SONARQUBE_PROJECT_ID }}
+          sonarqube_token: ${{ secrets.SONAR_TOKEN }}
