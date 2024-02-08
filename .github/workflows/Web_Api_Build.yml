@@ -37,7 +37,7 @@ jobs:
   #       uses: actions/checkout@v2
   #     - name: SonarQube scanner
   #       id: sonarqube_scanner
-  #       uses: ./.github/workflows/sonar-build-template.yml
+  #       uses: ./pipelines/sonarQube
   #       with:
   #         project_solution_path: ${{ env.CODE_PATH }}
   #         project_unittest_path: ${{ env.UNIT_TEST_PATH }}
