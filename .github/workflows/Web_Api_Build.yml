@@ -70,3 +70,46 @@ jobs:
         with:
           name: webapi-app
           path: ./output
+          
+  deploy_development:
+    runs-on: windows-latest
+    needs: [webapi-build]
+    if: always() && needs.webapi-build.result == 'success'
+    environment:
+      name: DEVELOPMENT
+    env:
+      ENVIRONMENT_NAME: "dev"
+    steps:
+      - uses: actions/checkout@v2
+      - id: webapi-deploy
+        uses: ./pipelines/web-app/deploy
+        with:
+          client_id: ${{ secrets.EA_AZURE_AD_CLIENT_ID }}
+          client_secret: ${{ secrets.EA_AZURE_AD_CLIENT_SECRET }}
+          azure_tenant_id: ${{ secrets.EA_AZURE_AD_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_DEV_SUBSCRIPTION_ID }}
+          resource_group_name: 'rg-${{ env.ENVIRONMENT_NAME }}-sharedlayer'
+          web_app_name: 'webapp-${{ env.ENVIRONMENT_NAME }}-shoppingapi'
+          source_directory: ${{ env.CODE_PATH }}
+
+  deploy_test:
+    runs-on: windows-latest
+    needs: [webapi-build]
+    if: always() && needs.webapi-build.result == 'success'
+    environment:
+      name: TEST
+    env:
+      ENVIRONMENT_NAME: "test"
+      ROOT_PATH: ""
+    steps:
+      - uses: actions/checkout@v2
+      - id: webapi-deploy
+        uses: ./pipelines/web-app/deploy
+        with:
+          client_id: ${{ secrets.EA_AZURE_AD_CLIENT_ID }}
+          client_secret: ${{ secrets.EA_AZURE_AD_CLIENT_SECRET }}
+          azure_tenant_id: ${{ secrets.EA_AZURE_AD_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_TEST_SUBSCRIPTION_ID }}
+          resource_group_name: 'rg-${{ env.ENVIRONMENT_NAME }}-sharedlayer'
+          web_app_name: 'webapp-${{ env.ENVIRONMENT_NAME }}-shoppingapi'
+          source_directory: ${{ env.CODE_PATH }}
