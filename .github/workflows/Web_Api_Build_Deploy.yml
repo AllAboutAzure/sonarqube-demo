@@ -1,4 +1,4 @@
-name: Web_Api_Build_
+name: Web_Api_Build_Deploy
 on:
   pull_request:
     branches:
