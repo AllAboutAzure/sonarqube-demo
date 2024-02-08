@@ -9,22 +9,22 @@ on:
       - reopened
       - synchronize
     paths:
-      - 'ShoppingCartWebApi/**'
-      -  'ShoppingTest/**'
+      - "ShoppingCartWebApi/**"
+      - "ShoppingTest/**"
   push:
     branches:
       - master
     paths:
-      - 'ShoppingCartWebApi/**'
-      - 'ShoppingTest/**'
+      - "ShoppingCartWebApi/**"
+      - "ShoppingTest/**"
   workflow_dispatch:
   workflow_call:
-env:  
-  CODE_PATH: 'ShoppingCartWebApi'
-  UNIT_TEST_PATH: 'ShoppingTest/ShoppingEndControllerTest.cs'
-  DOTNET_VERSION: '6.0.x'
-  SONARQUBE_PROJECT_ID: 'AllAboutAzure_sonarqube-demo'
-  SONARQUBE_ORG_ID: 'allaboutazure'
+env:
+  CODE_PATH: "ShoppingCartWebApi"
+  UNIT_TEST_PATH: "ShoppingTest/ShoppingEndControllerTest.cs"
+  DOTNET_VERSION: "6.0.x"
+  SONARQUBE_PROJECT_ID: "AllAboutAzure_sonarqube-demo"
+  SONARQUBE_ORG_ID: "allaboutazure"
 
 jobs:
   # SonarQube scanner job here
@@ -44,23 +44,22 @@ jobs:
   #         sonarqube_project_id: ${{ env.SONARQUBE_PROJECT_ID }}
   #         sonarqube_token: ${{ secrets.SONAR_TOKEN }}
   #         sonarqube_org_id : ${{env.SONARQUBE_ORG_ID}}
-    webapi-build:
-       name: WebAPI Build
-       #needs: [sonarqube]
-       runs-on: windows-latest
-       env:
-         BUILD_CONFIG: 'Release'
-         SOLUTION: 'SonarWebApi.sln'
-       steps:
-       - uses: actions/checkout@v2
+  webapi-build:
+    name: WebAPI Build
+    #needs: [sonarqube]
+    runs-on: windows-latest
+    env:
+      BUILD_CONFIG: "Release"
+      SOLUTION: "SonarWebApi.sln"
+    steps:
+      - uses: actions/checkout@v2
 
-       - name: Code SetUp
-         uses: actions/setup-dotnet@v1
-         with:
-           dotnet-version: 6.x
-       - name: Restore Dependencies
-         run: dotnet restore $SOLUTION
+      - name: Code SetUp
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.x
+      - name: Restore Dependencies
+        run: dotnet restore $SOLUTION
 
-       - name: Dotnet Build
-         run: dotnet build $SOLUTION --configuration $BUILD_CONFIG
-
+      - name: Dotnet Build
+        run: dotnet build $SOLUTION --configuration $BUILD_CONFIG
