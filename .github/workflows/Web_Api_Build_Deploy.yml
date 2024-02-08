@@ -27,27 +27,27 @@ env:
   SONARQUBE_ORG_ID: "allaboutazure"
 
 jobs:
-  # SonarQube scanner job here
-  # sonarqube:
-  #   name: SonarQube Scanner
-  #   runs-on: windows-latest
-  #   if: github.event_name == 'pull_request'
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-  #     - name: SonarQube scanner
-  #       id: sonarqube_scanner
-  #       uses: ./pipelines/sonarQube
-  #       with:
-  #         project_solution_path: ${{ env.CODE_PATH }}
-  #         project_unittest_path: ${{ env.UNIT_TEST_PATH }}
-  #         sonarqube_project_id: ${{ env.SONARQUBE_PROJECT_ID }}
-  #         sonar_token: ${{ secrets.SONAR_TOKEN }}
-  #         sonarqube_org_id : ${{env.SONARQUBE_ORG_ID}}
+  SonarQube scanner job here
+  sonarqube:
+    name: SonarQube Scanner
+    runs-on: windows-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: SonarQube scanner
+        id: sonarqube_scanner
+        uses: ./pipelines/sonarQube
+        with:
+          project_solution_path: ${{ env.CODE_PATH }}
+          project_unittest_path: ${{ env.UNIT_TEST_PATH }}
+          sonarqube_project_id: ${{ env.SONARQUBE_PROJECT_ID }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          sonarqube_org_id : ${{env.SONARQUBE_ORG_ID}}
 
   webapi-build:
     name: WebAPI Build
-    # needs: [sonarqube]
+    needs: [sonarqube]
     runs-on: windows-latest
     env:
       BUILD_CONFIG: "Release"
@@ -59,8 +59,6 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.x
-      # - name: Restore Dependencies
-      #   run: dotnet restore $SOLUTION
 
       - name: Dotnet Build
         run: dotnet build --configuration Release --output ./output
