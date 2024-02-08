@@ -16,11 +16,7 @@ inputs:
     required: true
   sonar_token:
     description: "sonar token"
-    required: true
-  github_token:
-    description: "github Token"
-    required: true
-    
+    required: true    
 
 runs:
   using: "Composite"
@@ -57,7 +53,7 @@ runs:
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
     - name: Build and analyze
       env:
-        GITHUB_TOKEN: ${{ inputs.github_token}} # Needed to get PR information, if any
+        # GITHUB_TOKEN: ${{ inputs.github_token}} # Needed to get PR information, if any
         SONAR_TOKEN: ${{ inputs.sonar_token }}
       shell: powershell
       run: |
