@@ -56,7 +56,7 @@ namespace ShoppingTest
                 productId = 4,
                 productName = "Test",
                 productDescription = "sample description",
-                productType = "sample type",
+                productType = "sample type 1",
                 placeOrder = false,
                 pushToCart = true
             };
