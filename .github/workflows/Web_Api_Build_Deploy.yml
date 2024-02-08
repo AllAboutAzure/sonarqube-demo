@@ -48,6 +48,9 @@ jobs:
     name: WebAPI Build
     needs: [sonarqube]
     runs-on: windows-latest
+    if: |
+      always() &&
+      (needs.sonarqube.result == 'success' || needs.sonarqube.result == 'skipped')
     env:
       BUILD_CONFIG: "Release"
       SOLUTION: "SonarWebApi.sln"
