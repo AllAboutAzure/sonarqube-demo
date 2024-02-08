@@ -35,7 +35,7 @@ namespace ShoppingTest
         public void GetProductById_Success()
         {
             //Arrange
-            int valid_productId = 1;
+            int valid_productId = 2;
             int invalid_productId = 6;
 
             //Act
