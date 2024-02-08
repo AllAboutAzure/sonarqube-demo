@@ -27,7 +27,6 @@ env:
   SONARQUBE_ORG_ID: "allaboutazure"
 
 jobs:
-  SonarQube scanner job here
   sonarqube:
     name: SonarQube Scanner
     runs-on: windows-latest
