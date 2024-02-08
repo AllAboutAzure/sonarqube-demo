@@ -1,4 +1,6 @@
 This Repo, Contains a complete Sonar Qube Set up for .Net Web Api /web Application.
+_use: With Reusable pipelines concepts.
+Targeted : Large Projects with multiple dependencies._
 
 **Refer Blog**: https://medium.com/@devopswithyoge/standardize-sonar-cloud-integration-with-ci-pipeline-net-core-web-app-api-using-github-actions-bc6b31121c28
 
