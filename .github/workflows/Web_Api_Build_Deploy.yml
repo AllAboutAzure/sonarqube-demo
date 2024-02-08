@@ -1,0 +1,111 @@
+name: Web_Api_Build_Deploy
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+    paths:
+      - 'ShoppingCartWebApi/**'
+      - 'ShoppingTest/**'
+  push:
+    branches:
+      - master
+    paths:
+      - 'ShoppingCartWebApi/**'
+      - 'ShoppingTest/**'
+  workflow_dispatch:
+  workflow_call:
+env:
+  CODE_PATH: "ShoppingCartWebApi"
+  UNIT_TEST_PATH: "ShoppingTest/ShoppingEndControllerTest.cs"
+  DOTNET_VERSION: "6.0.x"
+  SONARQUBE_PROJECT_ID: "AllAboutAzure_sonarqube-demo"
+  SONARQUBE_ORG_ID: "allaboutazure"
+
+jobs:
+  sonarqube:
+    name: SonarQube Scanner
+    runs-on: windows-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: SonarQube scanner
+        id: sonarqube_scanner
+        uses: ./pipelines/sonarQube
+        with:
+          project_solution_path: ${{ env.CODE_PATH }}
+          project_unittest_path: ${{ env.UNIT_TEST_PATH }}
+          sonarqube_project_id: ${{ env.SONARQUBE_PROJECT_ID }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          sonarqube_org_id : ${{env.SONARQUBE_ORG_ID}}
+
+  webapi-build:
+    name: WebAPI Build
+    needs: [sonarqube]
+    runs-on: windows-latest
+    env:
+      BUILD_CONFIG: "Release"
+      SOLUTION: "SonarWebApi.sln"
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Code SetUp
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.x
+
+      - name: Dotnet Build
+        run: dotnet build --configuration Release --output ./output
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: webapi-app
+          path: ./output
+          
+  deploy_development:
+    runs-on: windows-latest
+    needs: [webapi-build]
+    if: always() && github.ref == 'refs/heads/master' && needs.webapi-build.result == 'success'
+    environment:
+      name: DEVELOPMENT
+    env:
+      ENVIRONMENT_NAME: "dev"
+    steps:
+      - uses: actions/checkout@v2
+      - id: webapi-deploy
+        uses: ./pipelines/web-app/deploy
+        with:
+          client_id: ${{ secrets.EA_AZURE_AD_CLIENT_ID }}
+          client_secret: ${{ secrets.EA_AZURE_AD_CLIENT_SECRET }}
+          azure_tenant_id: ${{ secrets.EA_AZURE_AD_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_DEV_SUBSCRIPTION_ID }}
+          resource_group_name: 'rg-${{ env.ENVIRONMENT_NAME }}-sharedlayer'
+          web_app_name: 'webapp-${{ env.ENVIRONMENT_NAME }}-shoppingapi'
+          source_directory: ${{ env.CODE_PATH }}
+
+  deploy_test:
+    runs-on: windows-latest
+    needs: [webapi-build]
+    if: always() && github.ref == 'refs/heads/master' && needs.webapi-build.result == 'success'
+    environment:
+      name: TEST
+    env:
+      ENVIRONMENT_NAME: "test"
+    steps:
+      - uses: actions/checkout@v2
+      - id: webapi-deploy
+        uses: ./pipelines/web-app/deploy
+        with:
+          client_id: ${{ secrets.EA_AZURE_AD_CLIENT_ID }}
+          client_secret: ${{ secrets.EA_AZURE_AD_CLIENT_SECRET }}
+          azure_tenant_id: ${{ secrets.EA_AZURE_AD_TENANT_ID }}
+          azure_subscription_id: ${{ secrets.AZURE_TEST_SUBSCRIPTION_ID }}
+          resource_group_name: 'rg-${{ env.ENVIRONMENT_NAME }}-sharedlayer'
+          web_app_name: 'webapp-${{ env.ENVIRONMENT_NAME }}-shoppingapi'
+          source_directory: ${{ env.CODE_PATH }}

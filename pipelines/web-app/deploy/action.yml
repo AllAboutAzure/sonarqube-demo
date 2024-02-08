@@ -1,0 +1,70 @@
+name: Web Api Deployment
+description: 'Deploy web api to Azure'   
+  
+inputs:
+  azure_tenant_id:  
+    description: 'azure subscription id '
+    required: true
+  azure_subscription_id:
+    description: 'azure subscription id '
+    required: true
+  client_id:  
+    description: 'service principal client id '
+    required: true
+  client_secret: 
+    description: 'service principal client id '
+    required: true
+  resource_group_name: 
+    description: 'resource_group_name '
+    required: true
+  web_app_name: 
+    description: 'function_app_name '
+    required: true
+  source_directory:  
+    description: 'source code directory'
+    required: true
+    default: './'
+  
+runs:
+  using: "composite"
+  steps:
+    
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v2
+      with:
+        name: function-app
+        path: ${{inputs.source_directory}}/src
+
+    - name: Install Required Modules from PSGallery
+      shell: pwsh
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module -Name Az
+         
+    - name: Login via Az module
+      id: login
+      uses: azure/login@v1
+      with:
+          creds: '{"clientId":"${{ inputs.client_id }}","clientSecret":"${{ inputs.client_secret }}","subscriptionId":"${{ inputs.azure_subscription_id }}","tenantId":"${{ inputs.azure_tenant_id }}"}'
+          enable-AzPSSession: true
+        
+    - name: Get Publishing Profile
+      id: getpublishingprofile
+      uses: azure/powershell@v1
+      with:
+        inlineScript: |
+            $profile = Get-AzWebAppPublishingProfile `
+                -ResourceGroupName ${{ inputs.resource_group_name }} `
+                -Name ${{ inputs.web_app_name }} 
+            $profile = $profile.Replace("`r", "").Replace("`n", "")
+            Write-Output "::set-output name=profile::$profile"
+        azPSVersion: latest
+          
+    - name: deploy web-api
+      uses: azure/webapps-deploy@v2
+      id: deploy-to-webapp
+      with: 
+          app-name: ${{ inputs.web_app_name }} 
+          package: '${{inputs.source_directory}}/src'          
+          publish-profile: ${{ steps.getpublishingprofile.outputs.profile }}
+
