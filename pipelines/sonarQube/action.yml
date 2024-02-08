@@ -11,13 +11,13 @@ inputs:
   sonarqube_project_id:
     description: "project id"
     required: true
+  sonar_token:
+    description: "sonar token"
+    required: true
   sonarqube_org_id:
     description: "organisation id"
     required: true
-  sonar_token:
-    description: "sonar token"
-    required: true    
-
+   
 runs:
   using: "Composite"
   steps:
