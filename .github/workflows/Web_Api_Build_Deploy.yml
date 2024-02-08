@@ -71,7 +71,7 @@ jobs:
   deploy_development:
     runs-on: windows-latest
     needs: [webapi-build]
-    if: always() && needs.webapi-build.result == 'success'
+    if: always() && github.ref == 'refs/heads/master' && needs.webapi-build.result == 'success'
     environment:
       name: DEVELOPMENT
     env:
@@ -92,12 +92,11 @@ jobs:
   deploy_test:
     runs-on: windows-latest
     needs: [webapi-build]
-    if: always() && needs.webapi-build.result == 'success'
+    if: always() && github.ref == 'refs/heads/master' && needs.webapi-build.result == 'success'
     environment:
       name: TEST
     env:
       ENVIRONMENT_NAME: "test"
-      ROOT_PATH: ""
     steps:
       - uses: actions/checkout@v2
       - id: webapi-deploy
