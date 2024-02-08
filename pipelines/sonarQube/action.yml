@@ -14,6 +14,13 @@ inputs:
   sonarqube_org_id:
     description: "organisation id"
     required: true
+  sonar_token:
+    description: "sonar token"
+    required: true
+  github_token:
+    description: "github Token"
+    required: true
+    
 
 runs:
   using: "Composite"
@@ -50,8 +57,8 @@ runs:
         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
     - name: Build and analyze
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github_token}} # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ inputs.sonar_token }}
       shell: powershell
       run: |
         dotnet tool install --global dotnet-coverage
@@ -59,7 +66,7 @@ runs:
         dotnet tool install --global dotnet-sonarscanner
         dotnet add package coverlet.msbuild
         dotnet add package coverlet.collector
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{inputs.sonarqube_project_id}}" /o:"${{inputs.sonarqube_org_id}}" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.host.url="https://sonarcloud.io"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"${{inputs.sonarqube_project_id}}" /o:"${{inputs.sonarqube_org_id}}" /d:sonar.token="${{ env.SONAR_TOKEN }}" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.host.url="https://sonarcloud.io"
         dotnet build "${{inputs.project_solution_path}}"
         dotnet test "${{inputs.project_unittest_path}}" `
         --collect:"XPlat Code Coverage" `
@@ -68,4 +75,4 @@ runs:
         --configuration release `
         -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-        .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
